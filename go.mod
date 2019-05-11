@@ -1,4 +1,4 @@
-module ChatBot
+module github.com/Rayer/chatbot
 
 require (
 	github.com/pkg/errors v0.8.0
