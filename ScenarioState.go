@@ -8,6 +8,19 @@ type ScenarioState interface {
 	SetParentScenario(parent Scenario)
 }
 
+type KeywordAction func(keyword string, input string, scenario Scenario, state ScenarioState) (string, error)
+
+type Keyword struct {
+	Keyword string
+	Action  KeywordAction
+}
+
+type KeywordHandler struct {
+	keywordList []Keyword
+	scenario    Scenario
+	state       ScenarioState
+}
+
 type DefaultScenarioStateImpl struct {
 	parent Scenario
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"ChatBot"
 	"bufio"
 	"fmt"
+	ChatBot "github.com/Rayer/chatbot"
 	"github.com/sirupsen/logrus"
 	"os"
 	"strings"

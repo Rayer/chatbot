@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ChatBot"
+	ChatBot "github.com/Rayer/chatbot"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
