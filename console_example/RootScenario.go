@@ -2,6 +2,7 @@ package main
 
 import (
 	ChatBot "github.com/Rayer/chatbot"
+	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
@@ -32,6 +33,11 @@ func (rs *RootScenario) DisposeScenario() error {
 	return nil
 }
 
+func keywordTransformer(fullMessage string, keyword string) string {
+	yellow := color.New(color.BgRed).SprintFunc()
+	return yellow(keyword)
+}
+
 //It's Scenario State
 //The only state of the root scenario
 type EntryState struct {
@@ -45,13 +51,18 @@ func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
 		es.GetParentScenario().GetUserContext().InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
 		return "Go to report scenario", nil
 	}})
-	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"manage broadcast", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
+
+	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"manage broadcasts", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
+		es.GetParentScenario().ChangeStateByName("second")
 		return "Exit with 2", nil
 	}})
+
+	es.KeywordHandler.OnEachKeyword = keywordTransformer
 }
 
 func (es *EntryState) RenderMessage() (string, error) {
-	return "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?", nil
+	rawMsg := "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?"
+	return es.TransformRawMessage(rawMsg)
 }
 
 func (es *EntryState) HandleMessage(input string) (string, error) {
@@ -69,7 +80,7 @@ func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
 
 func (ss *SecondState) RenderMessage() (string, error) {
 	raw := "This is second message, you can only [exit] in order to get out of here"
-	return ss.KeywordHandler.HandleRawMessage(raw)
+	return ss.KeywordHandler.TransformRawMessage(raw)
 }
 
 func (ss *SecondState) HandleMessage(input string) (string, error) {

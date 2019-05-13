@@ -77,7 +77,7 @@ func (kh *KeywordHandler) ParseAction(input string) (string, error) {
 	return "No match keyword", nil
 }
 
-func (kh *KeywordHandler) HandleRawMessage(rawMessage string) (string, error) {
+func (kh *KeywordHandler) TransformRawMessage(rawMessage string) (string, error) {
 
 	kh.checkInitialized()
 	transformedMessage := rawMessage
@@ -97,11 +97,10 @@ func (kh *KeywordHandler) HandleRawMessage(rawMessage string) (string, error) {
 			keyword = strings.Replace(keyword, "[", "", -1)
 			keyword = strings.Replace(keyword, "]", "", -1)
 
-
 			//TODO: Do we need case sensitive?
 			if strings.ToLower(keywordDefine.Keyword) == strings.ToLower(keyword) {
 				transformedKeyword := kh.OnEachKeyword(rawMessage, keyword)
-				strings.Replace(transformedMessage, originalKeyword, transformedKeyword, -1)
+				transformedMessage = strings.Replace(transformedMessage, originalKeyword, transformedKeyword, -1)
 				break
 			}
 		}
