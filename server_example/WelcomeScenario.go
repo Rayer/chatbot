@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ChatBot"
 	"fmt"
+	ChatBot "github.com/Rayer/chatbot"
 )
 
 type WelcomeScenario struct{

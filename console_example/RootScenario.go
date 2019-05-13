@@ -36,9 +36,18 @@ func (rs *RootScenario) DisposeScenario() error {
 //The only state of the root scenario
 type EntryState struct {
 	ChatBot.DefaultScenarioStateImpl
+	ChatBot.KeywordHandler
 }
 
 func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
+	es.KeywordHandler.Init(scenario, es)
+	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"submit report", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (string, error) {
+		es.GetParentScenario().GetUserContext().InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
+		return "Go to report scenario", nil
+	}})
+	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"manage broadcast", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
+		return "Exit with 2", nil
+	}})
 }
 
 func (es *EntryState) RenderMessage() (string, error) {
@@ -46,26 +55,21 @@ func (es *EntryState) RenderMessage() (string, error) {
 }
 
 func (es *EntryState) HandleMessage(input string) (string, error) {
-	if strings.Contains(input, "submit report") {
-		es.GetParentScenario().GetUserContext().InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
-		return "Go to report scenario", nil
-	} else if strings.Contains(input, "manage broadcast") {
-		es.GetParentScenario().ChangeStateByName("second")
-		return "Exit with 2", nil
-	}
-
-	return "Nothing done", nil
+	return es.KeywordHandler.ParseAction(input)
 }
 
 type SecondState struct {
 	ChatBot.DefaultScenarioStateImpl
+	ChatBot.KeywordHandler
 }
 
 func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
+	ss.KeywordHandler.Init(scenario, ss)
 }
 
 func (ss *SecondState) RenderMessage() (string, error) {
-	return "This is second message, you can only [exit] in order to get out of here", nil
+	raw := "This is second message, you can only [exit] in order to get out of here"
+	return ss.KeywordHandler.HandleRawMessage(raw)
 }
 
 func (ss *SecondState) HandleMessage(input string) (string, error) {
