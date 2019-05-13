@@ -33,7 +33,7 @@ func (rs *RootScenario) DisposeScenario() error {
 	return nil
 }
 
-func keywordTransformer(fullMessage string, keyword string) string {
+func keywordTransformer(_ string, keyword string) string {
 	yellow := color.New(color.BgRed).SprintFunc()
 	return yellow(keyword)
 }
@@ -42,19 +42,18 @@ func keywordTransformer(fullMessage string, keyword string) string {
 //The only state of the root scenario
 type EntryState struct {
 	ChatBot.DefaultScenarioStateImpl
-	ChatBot.KeywordHandler
 }
 
 func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
-	es.KeywordHandler.Init(scenario, es)
+	es.Init(scenario, es)
 	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"submit report", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (string, error) {
-		es.GetParentScenario().GetUserContext().InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
-		return "Go to report scenario", nil
+		err := es.InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
+		return "Go to report scenario", err
 	}})
 
 	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"manage broadcasts", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
-		es.GetParentScenario().ChangeStateByName("second")
-		return "Exit with 2", nil
+		err := es.ChangeStateByName("second")
+		return "Exit with 2", err
 	}})
 
 	es.KeywordHandler.OnEachKeyword = keywordTransformer
@@ -71,11 +70,10 @@ func (es *EntryState) HandleMessage(input string) (string, error) {
 
 type SecondState struct {
 	ChatBot.DefaultScenarioStateImpl
-	ChatBot.KeywordHandler
 }
 
 func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
-	ss.KeywordHandler.Init(scenario, ss)
+	ss.Init(scenario, ss)
 }
 
 func (ss *SecondState) RenderMessage() (string, error) {
@@ -85,8 +83,8 @@ func (ss *SecondState) RenderMessage() (string, error) {
 
 func (ss *SecondState) HandleMessage(input string) (string, error) {
 	if strings.Contains(input, "exit") {
-		ss.GetParentScenario().ChangeStateByName("entry")
-		return "Exiting...", nil
+		err := ss.ChangeStateByName("entry")
+		return "Exiting...", err
 	}
 	return "Not exit, stay here.", nil
 }

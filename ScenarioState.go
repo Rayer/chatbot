@@ -5,19 +5,21 @@ type ScenarioState interface {
 	RenderMessage() (string, error)
 	HandleMessage(input string) (string, error)
 	GetParentScenario() Scenario
-	SetParentScenario(parent Scenario)
 }
 
 type DefaultScenarioStateImpl struct {
 	parent Scenario
+	KeywordHandler
+	Utilities
+}
+
+func (dssi *DefaultScenarioStateImpl) Init(scenario Scenario, state ScenarioState) {
+	dssi.parent = scenario
+	dssi.KeywordHandler.Init(scenario, state)
+	dssi.Utilities.Init(scenario, state)
 }
 
 func (dssi *DefaultScenarioStateImpl) GetParentScenario() Scenario {
 	return dssi.parent
 }
-
-func (dssi *DefaultScenarioStateImpl) SetParentScenario(parent Scenario) {
-	dssi.parent = parent
-}
-
 
