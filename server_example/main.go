@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ChatBot"
 	"encoding/json"
+	ChatBot "github.com/Rayer/chatbot"
 	log "github.com/sirupsen/logrus"
 )
 import "net/http"

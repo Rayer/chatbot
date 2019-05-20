@@ -7,7 +7,7 @@ import (
 )
 
 type KeywordAction func(keyword string, input string, scenario Scenario, state ScenarioState) (string, error)
-type KeywordProcessCallback func(fullMessage string, keyword string) string
+type KeywordFormatter func(fullMessage string, keyword string) string
 
 type Keyword struct {
 	Keyword string
@@ -15,26 +15,22 @@ type Keyword struct {
 }
 
 type KeywordHandler struct {
-	keywordList []Keyword
-	scenario    Scenario
-	state       ScenarioState
-	initialized bool
-	OnEachKeyword KeywordProcessCallback
+	keywordList      []Keyword
+	scenario         Scenario
+	state            ScenarioState
+	initialized      bool
+	KeywordFormatter KeywordFormatter
 }
 
 func NewKeywordHandler(scenario Scenario, state ScenarioState) *KeywordHandler {
-	return &KeywordHandler{scenario: scenario, state: state, OnEachKeyword: func(fullMessage string, keyword string) string {
-		return "[" + keyword + "]"
-	}, initialized:true}
+	return &KeywordHandler{scenario: scenario, state: state, KeywordFormatter: GetConfiguration().KeywordFormatter, initialized:true}
 }
 
 func (kh *KeywordHandler) Init(scenario Scenario, state ScenarioState) {
 	kh.initialized = true
 	kh.scenario = scenario
 	kh.state = state
-	kh.OnEachKeyword = func(fullMessage string, keyword string) string {
-		return "[" + keyword + "]"
-	}
+	kh.KeywordFormatter = GetConfiguration().KeywordFormatter
 }
 
 func (kh *KeywordHandler) checkInitialized() {
@@ -99,7 +95,7 @@ func (kh *KeywordHandler) TransformRawMessage(rawMessage string) (string, error)
 
 			//TODO: Do we need case sensitive?
 			if strings.ToLower(keywordDefine.Keyword) == strings.ToLower(keyword) {
-				transformedKeyword := kh.OnEachKeyword(rawMessage, keyword)
+				transformedKeyword := kh.KeywordFormatter(rawMessage, keyword)
 				transformedMessage = strings.Replace(transformedMessage, originalKeyword, transformedKeyword, -1)
 				break
 			}

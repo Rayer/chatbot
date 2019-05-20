@@ -2,7 +2,6 @@ package main
 
 import (
 	ChatBot "github.com/Rayer/chatbot"
-	"github.com/fatih/color"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
@@ -33,11 +32,6 @@ func (rs *RootScenario) DisposeScenario() error {
 	return nil
 }
 
-func keywordTransformer(_ string, keyword string) string {
-	yellow := color.New(color.BgRed).SprintFunc()
-	return yellow(keyword)
-}
-
 //It's Scenario State
 //The only state of the root scenario
 type EntryState struct {
@@ -55,8 +49,6 @@ func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
 		err := es.ChangeStateByName("second")
 		return "Exit with 2", err
 	}})
-
-	es.KeywordHandler.OnEachKeyword = keywordTransformer
 }
 
 func (es *EntryState) RenderMessage() (string, error) {

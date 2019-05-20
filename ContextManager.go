@@ -10,15 +10,28 @@ type ContextManager struct {
 	Configuration *Configuration
 }
 
-type Configuration struct {
-	ResetTimerSec int
+func DefaultKeywordFormatter(fullText string, keyword string) string {
+	return "[" + keyword + "]"
 }
+
+type Configuration struct {
+	ResetTimerSec    int
+	KeywordFormatter KeywordFormatter
+}
+
+var g_contextManager *ContextManager
+
+func GetConfiguration() *Configuration {
+	return g_contextManager.Configuration
+}
+
 
 func NewContextManager() *ContextManager {
 	//Given a default value for configuration
 
 	conf := Configuration{
 		ResetTimerSec: 300,
+		KeywordFormatter: DefaultKeywordFormatter,
 	}
 
 	return NewContextManagerWithConfig(&conf)
@@ -29,6 +42,7 @@ func NewContextManagerWithConfig(conf *Configuration) *ContextManager {
 		Configuration: conf,
 	}
 	ret.contextList = make(map[string]*UserContext)
+	g_contextManager = &ret
 	return &ret
 }
 
