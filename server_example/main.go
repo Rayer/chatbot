@@ -35,6 +35,7 @@ func main() {
 		dbg, _ := ctx.HandleMessage(phrase)
 
 
+		writer.Header().Set("Access-Control-Allow-Origin", "*")
 		writer.WriteHeader(200)
 
 		ret, _ := ctx.RenderMessage()
