@@ -51,9 +51,8 @@ func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
 	}})
 }
 
-func (es *EntryState) RenderMessage() (string, error) {
-	rawMsg := "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?"
-	return es.TransformRawMessage(rawMsg)
+func (es *EntryState) RawMessage() (string, error) {
+	return "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?", nil
 }
 
 func (es *EntryState) HandleMessage(input string) (string, error) {
@@ -68,7 +67,7 @@ func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
 	ss.Init(scenario, ss)
 }
 
-func (ss *SecondState) RenderMessage() (string, error) {
+func (ss *SecondState) RawMessage() (string, error) {
 	raw := "This is second message, you can only [exit] in order to get out of here"
 	return ss.KeywordHandler.TransformRawMessage(raw)
 }

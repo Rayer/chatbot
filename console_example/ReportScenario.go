@@ -49,10 +49,10 @@ type ReportEntryState struct {
 }
 
 func (res *ReportEntryState) InitScenarioState(scenario ChatBot.Scenario) {
-
+	res.Init(scenario, res)
 }
 
-func (res *ReportEntryState) RenderMessage() (string, error) {
+func (res *ReportEntryState) RawMessage() (string, error) {
 	/*
 		Designed functionality :
 		1. Let user view logs before (Not in this prototype)
@@ -82,10 +82,10 @@ type ReportCreatingDone struct {
 }
 
 func (rcd *ReportCreatingDone) InitScenarioState(scenario ChatBot.Scenario) {
-
+	rcd.Init(scenario, rcd)
 }
 
-func (rcd *ReportCreatingDone) RenderMessage() (string, error) {
+func (rcd *ReportCreatingDone) RawMessage() (string, error) {
 	return "What task have been done in this week? or there is [good for now]?", nil
 }
 
@@ -106,10 +106,10 @@ type ReportCreatingInDev struct {
 }
 
 func (rcid *ReportCreatingInDev) InitScenarioState(scenario ChatBot.Scenario) {
-
+	rcid.Init(scenario, rcid)
 }
 
-func (rcid *ReportCreatingInDev) RenderMessage() (string, error) {
+func (rcid *ReportCreatingInDev) RawMessage() (string, error) {
 	return "What task is in dev this week? or it's [good for now]?", nil
 }
 
@@ -130,10 +130,10 @@ type ReportConfirm struct {
 }
 
 func (rc *ReportConfirm) InitScenarioState(scenario ChatBot.Scenario) {
-
+	rc.Init(scenario, rc)
 }
 
-func (rc *ReportConfirm) RenderMessage() (string, error) {
+func (rc *ReportConfirm) RawMessage() (string, error) {
 	doneList := rc.GetParentScenario().(*ReportScenario).ThisWeekDone
 	indevList := rc.GetParentScenario().(*ReportScenario).ThisWeekInDev
 
