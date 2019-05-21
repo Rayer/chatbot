@@ -54,20 +54,25 @@ func (es *EntryState) RawMessage() (string, error) {
 	return "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?", nil
 }
 
-
 type SecondState struct {
 	ChatBot.DefaultScenarioStateImpl
 }
 
 func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
 	ss.Init(scenario, ss)
+	ss.RegisterKeyword(&ChatBot.Keyword{
+		Keyword:"exit",
+		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
+			err := ss.ChangeStateByName("entry")
+			return "Returning last state", err
+		},
+	})
 }
 
 func (ss *SecondState) RawMessage() (string, error) {
 	raw := "This is second message, you can only [exit] in order to get out of here"
 	return ss.KeywordHandler.TransformRawMessage(raw)
 }
-
 
 func (rs *RootScenario) Name() string {
 	return "RootScenario"

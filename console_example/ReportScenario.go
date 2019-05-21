@@ -83,11 +83,6 @@ func (res *ReportEntryState) RawMessage() (string, error) {
 	return "Hey, we don't see logs this week. Would you like to [create report]? or [view reports] in previous weeks? You also can [exit] if no longer need to operating with logs", nil
 }
 
-//Can be default
-func (res *ReportEntryState) HandleMessage(input string) (string, error) {
-	return res.KeywordHandler.ParseAction(input)
-}
-
 type ReportCreatingDone struct {
 	ChatBot.DefaultScenarioStateImpl
 }
@@ -116,10 +111,6 @@ func (rcd *ReportCreatingDone) RawMessage() (string, error) {
 	return "What task have been done in this week? or there is [good for now]?", nil
 }
 
-func (rcd *ReportCreatingDone) HandleMessage(input string) (string, error) {
-	return rcd.HandleMessage(input)
-}
-
 type ReportCreatingInDev struct {
 	ChatBot.DefaultScenarioStateImpl
 }
@@ -146,10 +137,6 @@ func (rcid *ReportCreatingInDev) InitScenarioState(scenario ChatBot.Scenario) {
 
 func (rcid *ReportCreatingInDev) RawMessage() (string, error) {
 	return "What task is in dev this week? or it's [good for now]?", nil
-}
-
-func (rcid *ReportCreatingInDev) HandleMessage(input string) (string, error) {
-	return rcid.HandleMessage(input)
 }
 
 type ReportConfirm struct {
@@ -193,6 +180,3 @@ func (rc *ReportConfirm) RawMessage() (string, error) {
 
 }
 
-func (rc *ReportConfirm) HandleMessage(input string) (string, error) {
-	return rc.HandleMessage(input)
-}

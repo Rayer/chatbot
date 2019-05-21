@@ -1,55 +1,54 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
 	ChatBot "github.com/Rayer/chatbot"
-	log "github.com/sirupsen/logrus"
+	"log"
+	"net/http"
 )
-import "net/http"
 
-type IncomingMessage struct {
-	User string `json:"user"`
-	Text string `json:"text"`
+func WebKeywordHandler(fullText string, keyword string) string {
+	return fmt.Sprintf("<font color=\"red\">%s</font>", keyword)
 }
 
 func main() {
-	ctm := ChatBot.NewContextManager()
-	ctm.Configuration.ResetTimerSec = 300
 
-	http.HandleFunc("/react", func(w http.ResponseWriter, r *http.Request) {
-		incomingMessage := IncomingMessage{}
-		err := r.ParseForm()
-		log.Info(r.Form)
+	conf := ChatBot.Configuration{ResetTimerSec:300, KeywordFormatter: WebKeywordHandler}
+	ctm := ChatBot.NewContextManagerWithConfig(&conf)
 
-		if err != nil {
-			log.Error("Error parse form : %v", err)
+	http.HandleFunc("/chatbot", func(writer http.ResponseWriter, request *http.Request) {
+
+		if request.Method != http.MethodPost {
+			writer.WriteHeader(404)
+			writer.Write([]byte("Invalid method"))
 			return
 		}
 
-		for key := range r.Form {
-			log.Println(key)
-			//LOG: {"test": "that"}
-			err := json.Unmarshal([]byte(key), &incomingMessage)
-			if err != nil {
-				log.Println(err.Error())
-			}
-		}
+		request.ParseForm()
+		name := request.PostForm["name"][0]
+		phrase := request.PostForm["phrase"][0]
+
+		ctx := ctm.CreateUserContext(name, func() ChatBot.Scenario {
+			return &RootScenario{}
+		})
+
+		dbg, _ := ctx.HandleMessage(phrase)
 
 
+		writer.WriteHeader(200)
 
-		ctx := ctm.GetUserContext(incomingMessage.User)
+		ret, _ := ctx.RenderMessage()
 
-		if ctx == nil {
-			ctx = ctm.CreateUserContext(incomingMessage.User, &WelcomeScenario{})
-		}
+		writer.Write([]byte(ret))
+		log.Printf("Name : %s\nPhrase : %s\nRes : %s\nRet : %s", name, phrase, dbg, ret)
 
-		response, err := ctx.RenderMessage()
-		if err != nil {
-			log.Error("Error rendering message()")
-		}
-
-
-
-
+		//writer.Write([]byte(ret))
 	})
+
+	http.HandleFunc("/chatbot/lastresponse", func(writer http.ResponseWriter, request *http.Request) {
+		writer.WriteHeader(200)
+		writer.Write([]byte("OK!"))
+	})
+
+	http.ListenAndServe(":12160", nil)
 }

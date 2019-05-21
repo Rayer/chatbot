@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $("#chatbot_submit").click(function (e) { 
+                e.preventDefault();
+                name = $("#chatbot_n").val();
+                phrase = $("#chatbot_p").val();
+                $.ajax({
+                    type: "post",
+                    url: "http://127.0.0.1:12160/chatbot",
+                    data: {
+                        "name": name,
+                        "phrase" : phrase
+                    },
+                    success: function (response) {
+                        $("#chatbot_response").html($("#chatbot_response").html() + response + "<br>");
+                        $("#chatbot_p").val("");
+                        $("#chatbot_p").select(function () { 
+                            
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <form action="http://localhost:12160/chatbot" method="post">
+    <fieldset>
+        <legend>ChatBot test client</legend>
+        Name : <input type="text" name="name" id="chatbot_n"><br>
+        Chat : <input type="text" name="phrase" id="chatbot_p"><br>
+        <input type="submit" value="submit!", id="chatbot_submit">
+    </fieldset>
+    </form>
+    <div id="chatbot_response">
+        ChatBot response area <br>
+    </div>
+</body>
+</html>

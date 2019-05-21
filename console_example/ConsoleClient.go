@@ -11,7 +11,7 @@ import (
 
 
 func KeywordTransformer(fulltext string, keyword string) string {
-	return keyword
+	return fmt.Sprintf("<spin color=\"red\">%s</spin>", keyword)
 }
 
 

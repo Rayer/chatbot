@@ -34,4 +34,9 @@ func (dssi *DefaultScenarioStateImpl) RenderMessage() (string, error) {
 	return dssi.TransformRawMessage(message)
 }
 
+func (dssi *DefaultScenarioStateImpl) HandleMessage(input string) (string, error) {
+	return dssi.ParseAction(input)
+}
+
+
 
