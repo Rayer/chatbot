@@ -27,3 +27,8 @@ func (u *Utilities) ChangeStateByName(stateName string) error {
 	u.checkInitialized()
 	return u.state.GetParentScenario().ChangeStateByName(stateName)
 }
+
+func (u *Utilities) ReturnLastScenario() error {
+	u.checkInitialized()
+	return u.state.GetParentScenario().GetUserContext().ReturnLastScenario()
+}
