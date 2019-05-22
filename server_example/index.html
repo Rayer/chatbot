@@ -42,7 +42,7 @@
                         validKeywords.forEach(keyword => {
                             message = message.replace(keyword, `<input type="button" value="${keyword}" class="resp_act_btn">`)
                         });        
-                        $("#chatbot_response").html(react + "<br>" + message + "<br>" + $("#chatbot_response").html());
+                        $("#chatbot_response").html(message + "<br>" + react  + "<br>" + $("#chatbot_response").html());
                         $("#chatbot_p").val(""); 
                     }
                 });
