@@ -10,8 +10,12 @@ type ContextManager struct {
 	Configuration *Configuration
 }
 
-func DefaultKeywordFormatter(fullText string, keyword string) string {
-	return "[" + keyword + "]"
+func DefaultKeywordFormatter(fullText string, keyword string, isValidKeyword bool) string {
+	if isValidKeyword {
+		return "[" + keyword + "]"
+	}
+
+	return "<<" + keyword + ">>"
 }
 
 type Configuration struct {

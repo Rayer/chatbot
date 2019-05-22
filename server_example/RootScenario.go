@@ -70,8 +70,7 @@ func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
 }
 
 func (ss *SecondState) RawMessage() (string, error) {
-	raw := "This is second message, you can only [exit] in order to get out of here"
-	return ss.KeywordHandler.TransformRawMessage(raw)
+	return "This is second message, you can only [exit] in order to get out of here", nil
 }
 
 func (rs *RootScenario) Name() string {

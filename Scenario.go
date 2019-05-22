@@ -3,6 +3,7 @@ package ChatBot
 type Scenario interface {
 	ScenarioCallback
 	RenderMessage() (string, error)
+	RenderMessageWithDetail() (output string, validKeywordList []string, invalidKeywordList []string, err error)
 	HandleMessage(input string) (string, error)
 	SetUserContext(user *UserContext)
 	GetUserContext() *UserContext
@@ -53,6 +54,11 @@ func (dsi *DefaultScenarioImpl) RegisterState(name string, state ScenarioState, 
 func (dsi *DefaultScenarioImpl) RenderMessage() (string, error) {
 	return dsi.currentState.RenderMessage()
 }
+
+func (dsi *DefaultScenarioImpl) RenderMessageWithDetail() (output string, validKeywordList []string, invalidKeywordList []string, err error) {
+	return dsi.currentState.RenderMessageWithDetail()
+}
+
 
 func (dsi *DefaultScenarioImpl) HandleMessage(input string) (string, error) {
 	return dsi.currentState.HandleMessage(input)

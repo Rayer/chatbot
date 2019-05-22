@@ -6,13 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    
     <script>
         $(document).ready(function () {
             $("#chatbot_submit").click(function (e) { 
                 e.preventDefault();
                 name = $("#chatbot_n").val();
                 phrase = $("#chatbot_p").val();
-                $.ajax({
+                ajaxSendMessage(name, phrase)
+            });
+
+            $(document).on('click', '.resp_act_btn', function (e) {
+                console.log(e.currentTarget.value)
+                name = $("#chatbot_n").val();
+                ajaxSendMessage(name, e.currentTarget.value)
+            });
+
+        });
+
+        function ajaxSendMessage(name, phrase) {
+            $.ajax({
                     type: "post",
                     url: "http://127.0.0.1:12160/chatbot",
                     data: {
@@ -20,15 +33,19 @@
                         "phrase" : phrase
                     },
                     success: function (response) {
-                        $("#chatbot_response").html($("#chatbot_response").html() + response + "<br>");
-                        $("#chatbot_p").val("");
-                        $("#chatbot_p").select(function () { 
-                            
-                        });
+                        let output = JSON.parse(response)
+                        let validKeywords = output.validKeywords
+                        let invalidKeywords = output.invalidKeywords
+                        var body = output.response
+
+                        validKeywords.forEach(keyword => {
+                            body = body.replace(keyword, `<input type="button" value="${keyword}" class="resp_act_btn">`)
+                        });        
+                        $("#chatbot_response").html(body + "<br>" + $("#chatbot_response").html());
+                        $("#chatbot_p").val(""); 
                     }
                 });
-            });
-        });
+        }
     </script>
 </head>
 <body>

@@ -7,7 +7,7 @@ import (
 )
 
 type KeywordAction func(keyword string, input string, scenario Scenario, state ScenarioState) (string, error)
-type KeywordFormatter func(fullMessage string, keyword string) string
+type KeywordFormatter func(fullMessage string, keyword string, isValidKeyword bool) string
 
 type Keyword struct {
 	Keyword string
@@ -73,12 +73,18 @@ func (kh *KeywordHandler) ParseAction(input string) (string, error) {
 	return "No match keyword", nil
 }
 
-func (kh *KeywordHandler) TransformRawMessage(rawMessage string) (string, error) {
+func (kh *KeywordHandler) TransformRawMessage(rawMessage string) (transformedMessage string, validKeywords []string, invalidKeywords []string) {
 
 	kh.checkInitialized()
-	transformedMessage := rawMessage
+	transformedMessage = rawMessage
 	r, _ := regexp.Compile(`\[([A-Za-z 0-9_]*)]`)
 	keywords := r.FindAllString(rawMessage, -1)
+
+	for _, k := range keywords {
+		k = strings.Replace(k, "[", "", -1)
+		k = strings.Replace(k, "]", "", -1)
+		invalidKeywords = append(invalidKeywords, k)
+	}
 
 
 	for _, keywordDefine := range kh.keywordList {
@@ -95,13 +101,27 @@ func (kh *KeywordHandler) TransformRawMessage(rawMessage string) (string, error)
 
 			//TODO: Do we need case sensitive?
 			if strings.ToLower(keywordDefine.Keyword) == strings.ToLower(keyword) {
-				transformedKeyword := kh.KeywordFormatter(rawMessage, keyword)
+				transformedKeyword := kh.KeywordFormatter(rawMessage, keyword, true)
 				transformedMessage = strings.Replace(transformedMessage, originalKeyword, transformedKeyword, -1)
+				validKeywords = append(validKeywords, keyword)
+
+				//Remove keyword in invalidKeywords
+				for i, v := range invalidKeywords {
+					if v == keyword {
+						invalidKeywords = append(invalidKeywords[:i], invalidKeywords[i+1:]...)
+						break
+					}
+				}
 				break
 			}
 		}
 	}
 
-	return transformedMessage, nil
+	//Transform invalid keywords
+	for _, ik := range invalidKeywords {
+		transformedMessage = strings.Replace(transformedMessage, "[" + ik + "]", kh.KeywordFormatter(rawMessage, ik, false), -1)
+	}
+
+	return transformedMessage, validKeywords, invalidKeywords
 
 }

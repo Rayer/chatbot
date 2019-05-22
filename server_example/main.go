@@ -1,14 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	ChatBot "github.com/Rayer/chatbot"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
-func WebKeywordHandler(fullText string, keyword string) string {
-	return fmt.Sprintf("<font color=\"red\">%s</font>", keyword)
+func WebKeywordHandler(fullText string, keyword string, validKeyword bool) string {
+	if validKeyword {
+		return fmt.Sprintf("%s", keyword)
+	}
+
+	return fmt.Sprintf("<font color = 'red'>%s</font>", keyword)
+}
+
+type MessageDetail struct {
+	Response string `json:"response"`
+	ValidKeywordList []string `json:"validKeywords"`
+	InvalidKeywordList []string `json:"invalidKeywords"`
 }
 
 func main() {
@@ -34,19 +45,35 @@ func main() {
 
 		dbg, _ := ctx.HandleMessage(phrase)
 
+		origin := request.Header.Get("Origin")
+		log.Info("Origin : %s", origin)
 
-		writer.Header().Set("Access-Control-Allow-Origin", "*")
+		writer.Header().Set("Access-Control-Allow-Origin", origin)
 		writer.WriteHeader(200)
 
-		ret, _ := ctx.RenderMessage()
+		output, validKeywords, invalidKeywords, _ := ctx.RenderMessageWithDetail()
 
+		response := MessageDetail{
+			output,
+			validKeywords,
+			invalidKeywords,
+		}
+
+		ret, err := json.Marshal(response)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		writer.Header().Add("Content-Type", "application/json")
+		writer.WriteHeader(200)
 		writer.Write([]byte(ret))
 		log.Printf("Name : %s\nPhrase : %s\nRes : %s\nRet : %s", name, phrase, dbg, ret)
 
 		//writer.Write([]byte(ret))
 	})
 
-	http.HandleFunc("/chatbot/lastresponse", func(writer http.ResponseWriter, request *http.Request) {
+	http.HandleFunc("/chatbot/detail", func(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(200)
 		writer.Write([]byte("OK!"))
 	})

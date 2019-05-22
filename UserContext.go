@@ -56,14 +56,20 @@ func (uc *UserContext) RenderMessage() (string, error) {
 	ret, err := uc.GetCurrentScenario().RenderMessage()
 	log.Infof("(%s)=>Rendering message : %s", uc.User, ret)
 	return ret, err
+}
 
+func (uc *UserContext) RenderMessageWithDetail() (output string, validKeywordList []string, invalidKeywordList []string, err error) {
+	uc.LastAccess = time.Now()
+	output, validKeywordList, invalidKeywordList, err = uc.GetCurrentScenario().RenderMessageWithDetail()
+	log.Infof("(%s)=>Rendering message with detail: %s : %s / %+v / %v", uc.User, output, validKeywordList, invalidKeywordList)
+	return output, validKeywordList, invalidKeywordList, err
 }
 
 func (uc *UserContext) HandleMessage(input string) (string, error) {
 	uc.LastAccess = time.Now()
 	ret, err := uc.GetCurrentScenario().HandleMessage(input)
 	log.Infof("(%s)=>Received message : %s", uc.User, input)
-	log.Infof("(%s)=>Rendering message : %s", uc.User, ret)
+	log.Infof("(%s)=>Return event message : %s", uc.User, ret)
 	return ret, err
 }
 
