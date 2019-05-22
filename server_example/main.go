@@ -18,6 +18,7 @@ func WebKeywordHandler(fullText string, keyword string, validKeyword bool) strin
 
 type MessageDetail struct {
 	Response string `json:"response"`
+	Message string `json:"message"`
 	ValidKeywordList []string `json:"validKeywords"`
 	InvalidKeywordList []string `json:"invalidKeywords"`
 }
@@ -43,10 +44,10 @@ func main() {
 			return &RootScenario{}
 		})
 
-		dbg, _ := ctx.HandleMessage(phrase)
+		react, _ := ctx.HandleMessage(phrase)
 
 		origin := request.Header.Get("Origin")
-		log.Info("Origin : %s", origin)
+		log.Infof("Origin : %s", origin)
 
 		writer.Header().Set("Access-Control-Allow-Origin", origin)
 		writer.WriteHeader(200)
@@ -54,6 +55,7 @@ func main() {
 		output, validKeywords, invalidKeywords, _ := ctx.RenderMessageWithDetail()
 
 		response := MessageDetail{
+			react,
 			output,
 			validKeywords,
 			invalidKeywords,
@@ -68,7 +70,7 @@ func main() {
 		writer.Header().Add("Content-Type", "application/json")
 		writer.WriteHeader(200)
 		writer.Write([]byte(ret))
-		log.Printf("Name : %s\nPhrase : %s\nRes : %s\nRet : %s", name, phrase, dbg, ret)
+		log.Printf("%+v", response)
 
 		//writer.Write([]byte(ret))
 	})

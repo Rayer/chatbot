@@ -36,12 +36,13 @@
                         let output = JSON.parse(response)
                         let validKeywords = output.validKeywords
                         let invalidKeywords = output.invalidKeywords
-                        var body = output.response
+                        var message = output.message
+                        let react = output.response
 
                         validKeywords.forEach(keyword => {
-                            body = body.replace(keyword, `<input type="button" value="${keyword}" class="resp_act_btn">`)
+                            message = message.replace(keyword, `<input type="button" value="${keyword}" class="resp_act_btn">`)
                         });        
-                        $("#chatbot_response").html(body + "<br>" + $("#chatbot_response").html());
+                        $("#chatbot_response").html(react + "<br>" + message + "<br>" + $("#chatbot_response").html());
                         $("#chatbot_p").val(""); 
                     }
                 });
