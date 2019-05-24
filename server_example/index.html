@@ -17,7 +17,6 @@
             });
 
             $(document).on('click', '.resp_act_btn', function (e) {
-                console.log(e.currentTarget.value)
                 name = $("#chatbot_n").val();
                 ajaxSendMessage(name, e.currentTarget.value)
             });
@@ -40,8 +39,24 @@
                         let react = output.response
 
                         validKeywords.forEach(keyword => {
-                            message = message.replace(keyword, `<input type="button" value="${keyword}" class="resp_act_btn">`)
-                        });        
+                            message = message.replace(keyword, `<span class="cb_response"><input type="button" value="${keyword}" class="resp_act_btn"></span>`)
+                        });
+                        
+                        //Strip old button
+                        old_reply = $("#chatbot_response").html();
+                        var elems = document.getElementsByClassName("cb_response");
+                        for (let item of elems) {
+
+                            var inner = item.getElementsByClassName("resp_act_btn");
+
+                            if (inner.length == 0) {
+                                continue
+                            }
+
+                            let text = inner[0].getAttribute("value");
+                            item.innerHTML = `<font color="Green">${text}</font>`;
+                        }
+
                         $("#chatbot_response").html(message + "<br>" + react  + "<br>" + $("#chatbot_response").html());
                         $("#chatbot_p").val(""); 
                     }
