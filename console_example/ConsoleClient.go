@@ -3,17 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
-	ChatBot "github.com/Rayer/chatbot"
+	ChatBot "github.com/rayer/chatbot"
 	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
 )
 
-
-func KeywordTransformer(fulltext string, keyword string) string {
-	return fmt.Sprintf("<spin color=\"red\">%s</spin>", keyword)
+func KeywordTransformer(fulltext string, keyword string, isValidKeyword bool) string {
+	//return fmt.Sprintf("<spin color=\"red\">%s</spin>", keyword)
+	return fmt.Sprintf("[%s]", keyword)
 }
-
 
 func main() {
 	logrus.SetLevel(logrus.WarnLevel)
@@ -31,7 +30,7 @@ func main() {
 	}
 	fmt.Println("Welcome " + id + ", start invoking session...")
 	conf := ChatBot.Configuration{
-		ResetTimerSec: 300,
+		ResetTimerSec:    300,
 		KeywordFormatter: KeywordTransformer,
 	}
 	ctx := ChatBot.NewContextManagerWithConfig(&conf)

@@ -1,7 +1,7 @@
 package main
 
 import (
-	ChatBot "github.com/Rayer/chatbot"
+	ChatBot "github.com/rayer/chatbot"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -39,12 +39,12 @@ type EntryState struct {
 
 func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
 	es.Init(scenario, es)
-	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"submit report", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (string, error) {
+	es.RegisterKeyword(&ChatBot.Keyword{Keyword: "submit report", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (string, error) {
 		err := es.InvokeNextScenario(&ReportScenario{}, ChatBot.Stack)
 		return "Go to report scenario", err
 	}})
 
-	es.RegisterKeyword(&ChatBot.Keyword{Keyword:"manage broadcasts", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
+	es.RegisterKeyword(&ChatBot.Keyword{Keyword: "manage broadcasts", Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 		err := es.ChangeStateByName("second")
 		return "Exit with 2", err
 	}})
@@ -53,7 +53,6 @@ func (es *EntryState) InitScenarioState(scenario ChatBot.Scenario) {
 func (es *EntryState) RawMessage() (string, error) {
 	return "Hey it's BossBot! Are you going to [submit report], [manage broadcasts] or [check]?", nil
 }
-
 
 type SecondState struct {
 	ChatBot.DefaultScenarioStateImpl
@@ -65,9 +64,9 @@ func (ss *SecondState) InitScenarioState(scenario ChatBot.Scenario) {
 
 func (ss *SecondState) RawMessage() (string, error) {
 	raw := "This is second message, you can only [exit] in order to get out of here"
-	return ss.KeywordHandler.TransformRawMessage(raw)
+	transformed, _, _ := ss.KeywordHandler.TransformRawMessage(raw)
+	return transformed, nil
 }
-
 
 func (rs *RootScenario) Name() string {
 	return "RootScenario"

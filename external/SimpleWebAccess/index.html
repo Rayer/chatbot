@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $("#submit").click(function (e) { 
+                e.preventDefault();
+                $("#response").html($("#chatter").val() + "<br>" + $("#response").html());
+                $("#chatter").val("");
+            });
+        });
+    </script>
+</head>
+<body>
+    Server Status : <div id="serverStatus">Unknown</div>
+    <form action="sample.target.com/api/nobodycare" method="post">
+        <fieldset>
+            <legend>
+                Simple ChatBot 
+            </legend>
+            Name : <input type="text" name="name" id="name" value="Name"><br>
+            Chat : <input type="text" name="chatter" id="chatter"> <input type="submit" value="Submit!" id="submit">
+        </fieldset>
+    </form>
+    <div>
+        <h2>Response : </h2><br>
+        <div id="response">
+            This is response area<br>
+        </div>
+    </div>
+</body>
+</html>

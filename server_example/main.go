@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	ChatBot "github.com/Rayer/chatbot"
+	ChatBot "github.com/rayer/chatbot"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -17,15 +17,15 @@ func WebKeywordHandler(fullText string, keyword string, validKeyword bool) strin
 }
 
 type MessageDetail struct {
-	Response string `json:"response"`
-	Message string `json:"message"`
-	ValidKeywordList []string `json:"validKeywords"`
+	Response           string   `json:"response"`
+	Message            string   `json:"message"`
+	ValidKeywordList   []string `json:"validKeywords"`
 	InvalidKeywordList []string `json:"invalidKeywords"`
 }
 
 func main() {
 
-	conf := ChatBot.Configuration{ResetTimerSec:300, KeywordFormatter: WebKeywordHandler}
+	conf := ChatBot.Configuration{ResetTimerSec: 300, KeywordFormatter: WebKeywordHandler}
 	ctm := ChatBot.NewContextManagerWithConfig(&conf)
 
 	http.HandleFunc("/chatbot", func(writer http.ResponseWriter, request *http.Request) {
@@ -40,9 +40,13 @@ func main() {
 		name := request.PostForm["name"][0]
 		phrase := request.PostForm["phrase"][0]
 
-		ctx := ctm.CreateUserContext(name, func() ChatBot.Scenario {
-			return &RootScenario{}
-		})
+		ctx := ctm.GetUserContext(name)
+
+		if ctx == nil {
+			ctx = ctm.CreateUserContext(name, func() ChatBot.Scenario {
+				return &RootScenario{}
+			})
+		}
 
 		react, _ := ctx.HandleMessage(phrase)
 

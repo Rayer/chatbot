@@ -11,13 +11,13 @@
         $(document).ready(function () {
             $("#chatbot_submit").click(function (e) { 
                 e.preventDefault();
-                name = $("#chatbot_n").val();
-                phrase = $("#chatbot_p").val();
+                let name = $("#chatbot_n").val();
+                let phrase = $("#chatbot_p").val();
                 ajaxSendMessage(name, phrase)
             });
 
             $(document).on('click', '.resp_act_btn', function (e) {
-                name = $("#chatbot_n").val();
+                let name = $("#chatbot_n").val();
                 ajaxSendMessage(name, e.currentTarget.value)
             });
 
@@ -32,11 +32,11 @@
                         "phrase" : phrase
                     },
                     success: function (response) {
-                        let output = JSON.parse(response)
-                        let validKeywords = output.validKeywords
-                        let invalidKeywords = output.invalidKeywords
-                        var message = output.message
-                        let react = output.response
+                        let output = JSON.parse(response);
+                        let validKeywords = output.validKeywords;
+                        //let invalidKeywords = output.invalidKeywords
+                        let message = output.message;
+                        let react = output.response;
 
                         validKeywords.forEach(keyword => {
                             message = message.replace(keyword, `<span class="cb_response"><input type="button" value="${keyword}" class="resp_act_btn"></span>`)
@@ -49,12 +49,12 @@
 
                             var inner = item.getElementsByClassName("resp_act_btn");
 
-                            if (inner.length == 0) {
+                            if (inner.length === 0) {
                                 continue
                             }
 
                             let text = inner[0].getAttribute("value");
-                            item.innerHTML = `<font color="Green">${text}</font>`;
+                            item.innerHTML = `<span style="color:Green">${text}</span>`;
                         }
 
                         $("#chatbot_response").html(message + "<br>" + react  + "<br>" + $("#chatbot_response").html());
@@ -68,9 +68,9 @@
     <form action="http://localhost:12160/chatbot" method="post">
     <fieldset>
         <legend>ChatBot test client</legend>
-        Name : <input type="text" name="name" id="chatbot_n"><br>
-        Chat : <input type="text" name="phrase" id="chatbot_p"><br>
-        <input type="submit" value="submit!", id="chatbot_submit">
+        Name : <label for="chatbot_n"></label><input type="text" name="name" id="chatbot_n"><br>
+        Chat : <label for="chatbot_p"></label><input type="text" name="phrase" id="chatbot_p"><br>
+        <input type="submit" value="submit!" id="chatbot_submit">
     </fieldset>
     </form>
     <div id="chatbot_response">

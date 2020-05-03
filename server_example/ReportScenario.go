@@ -1,7 +1,7 @@
 package main
 
 import (
-	ChatBot "github.com/Rayer/chatbot"
+	ChatBot "github.com/rayer/chatbot"
 )
 
 type ReportScenario struct {
@@ -50,20 +50,20 @@ type ReportEntryState struct {
 func (res *ReportEntryState) InitScenarioState(scenario ChatBot.Scenario) {
 	res.Init(scenario, res)
 	res.KeywordHandler.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"create report",
+		Keyword: "create report",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			err := res.ChangeStateByName("creating_done")
 			return "Ok let's creating a report", err
 		},
 	})
 	res.KeywordHandler.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"view reports",
+		Keyword: "view reports",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			return "Not really implemented in this prototype version... maybe later", nil
 		},
 	})
 	res.KeywordHandler.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"exit",
+		Keyword: "exit",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			err := res.ReturnLastScenario()
 			return "Let's back to previous session", err
@@ -83,7 +83,6 @@ func (res *ReportEntryState) RawMessage() (string, error) {
 	return "Hey, we don't see logs this week. Would you like to [create report]? or [view reports] in previous weeks? You also can [exit] if no longer need to operating with logs", nil
 }
 
-
 type ReportCreatingDone struct {
 	ChatBot.DefaultScenarioStateImpl
 }
@@ -91,7 +90,7 @@ type ReportCreatingDone struct {
 func (rcd *ReportCreatingDone) InitScenarioState(scenario ChatBot.Scenario) {
 	rcd.Init(scenario, rcd)
 	rcd.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"good for now",
+		Keyword: "good for now",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			err := rcd.ChangeStateByName("creating_indev")
 			return "Done in done", err
@@ -99,7 +98,7 @@ func (rcd *ReportCreatingDone) InitScenarioState(scenario ChatBot.Scenario) {
 	})
 
 	rcd.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"",
+		Keyword: "",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			doneList := rcd.GetParentScenario().(*ReportScenario).ThisWeekDone
 			rcd.GetParentScenario().(*ReportScenario).ThisWeekDone = append(doneList, input)
@@ -126,7 +125,7 @@ func (rcid *ReportCreatingInDev) InitScenarioState(scenario ChatBot.Scenario) {
 		},
 	})
 	rcid.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"",
+		Keyword: "",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			indevList := rcid.GetParentScenario().(*ReportScenario).ThisWeekInDev
 			rcid.GetParentScenario().(*ReportScenario).ThisWeekInDev = append(indevList, input)
@@ -147,14 +146,14 @@ type ReportConfirm struct {
 func (rc *ReportConfirm) InitScenarioState(scenario ChatBot.Scenario) {
 	rc.Init(scenario, rc)
 	rc.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"submit",
+		Keyword: "submit",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			err := rc.ReturnLastScenario()
 			return "Submitted", err
 		},
 	})
 	rc.RegisterKeyword(&ChatBot.Keyword{
-		Keyword:"discard",
+		Keyword: "discard",
 		Action: func(keyword string, input string, scenario ChatBot.Scenario, state ChatBot.ScenarioState) (s string, e error) {
 			err := rc.ReturnLastScenario()
 			return "Discarded", err
@@ -180,4 +179,3 @@ func (rc *ReportConfirm) RawMessage() (string, error) {
 	return ret, nil
 
 }
-
