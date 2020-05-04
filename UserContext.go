@@ -61,7 +61,7 @@ func (uc *UserContext) RenderMessage() (string, error) {
 func (uc *UserContext) RenderMessageWithDetail() (output string, validKeywordList []string, invalidKeywordList []string, err error) {
 	uc.LastAccess = time.Now()
 	output, validKeywordList, invalidKeywordList, err = uc.GetCurrentScenario().RenderMessageWithDetail()
-	log.Infof("(%s)=>Rendering message with detail: %s : %s / %+v / %v", uc.User, output, validKeywordList, invalidKeywordList)
+	log.Infof("(%s)=>Rendering message with detail: %s : %s / %+v", uc.User, output, validKeywordList, invalidKeywordList)
 	return output, validKeywordList, invalidKeywordList, err
 }
 

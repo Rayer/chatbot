@@ -39,6 +39,7 @@ func main() {
 	})
 
 	fmt.Println(utx.RenderMessage())
+
 	for {
 		text, _ := reader.ReadString('\n')
 		text = strings.Replace(text, "\n", "", -1)

@@ -75,3 +75,12 @@ func (cm *ContextManager) GetUserContext(user string) *UserContext {
 	}
 	return uc
 }
+
+func (cm *ContextManager) ExpireUser(user string) {
+	uc := cm.contextList[user]
+	if uc == nil {
+		log.Warnf("User : %s not exist or already expired!", user)
+		return
+	}
+	cm.contextList[user] = nil
+}
