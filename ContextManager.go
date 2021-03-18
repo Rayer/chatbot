@@ -23,10 +23,10 @@ type Configuration struct {
 	KeywordFormatter KeywordFormatter
 }
 
-var g_contextManager *ContextManager
+var gContextmanager *ContextManager
 
 func GetConfiguration() *Configuration {
-	return g_contextManager.Configuration
+	return gContextmanager.Configuration
 }
 
 
@@ -46,7 +46,7 @@ func NewContextManagerWithConfig(conf *Configuration) *ContextManager {
 		Configuration: conf,
 	}
 	ret.contextList = make(map[string]*UserContext)
-	g_contextManager = &ret
+	gContextmanager = &ret
 	return &ret
 }
 

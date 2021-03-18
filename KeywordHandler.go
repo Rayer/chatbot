@@ -50,6 +50,10 @@ func (kh *KeywordHandler) RegisterKeyword(keyword *Keyword) {
 func (kh *KeywordHandler) ParseAction(input string) (string, error) {
 	kh.checkInitialized()
 	for _, kw := range kh.keywordList {
+		//bypass default one
+		if kw.Keyword == "" {
+			continue
+		}
 		if strings.Contains(strings.ToLower(input), strings.ToLower(kw.Keyword)) {
 			ret, err := kw.Action(kw.Keyword, input, kh.scenario, kh.state)
 			if err != nil {
