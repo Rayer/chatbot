@@ -50,40 +50,7 @@ func (k *KeywordhandlerTest)SetupTest() {
 func (k *KeywordhandlerTest)TearDownTest() {
 
 }
-//
-//
-//func TestKeywordHandler_Init(t *testing.T) {
-//	type fields struct {
-//		keywordList      []Keyword
-//		scenario         Scenario
-//		state            ScenarioState
-//		initialized      bool
-//		KeywordFormatter KeywordFormatter
-//	}
-//	type args struct {
-//		scenario Scenario
-//		state    ScenarioState
-//	}
-//	tests := []struct {
-//		name   string
-//		fields fields
-//		args   args
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			kh := &KeywordHandler{
-//				keywordList:      tt.fields.keywordList,
-//				scenario:         tt.fields.scenario,
-//				state:            tt.fields.state,
-//				initialized:      tt.fields.initialized,
-//				KeywordFormatter: tt.fields.KeywordFormatter,
-//			}
-//		})
-//	}
-//}
-//
+
 func (k *KeywordhandlerTest)TestParseActionWithoutDefault() {
 	type args struct {
 		input string
@@ -232,14 +199,27 @@ func (k *KeywordhandlerTest)TestTransformRawMessage() {
 		{
 			name: "CustomizedFormatter",
 			args: args{
-				rawMessage: fmt.Sprintf("Here is a message including [%s], [%s] and [%s]", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2]),
+				rawMessage: fmt.Sprintf("Here is a message including [%s], [%s] and [%s], [%s] is invalid.", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2], "invalid one"),
 			},
 			formatter: func(fullMessage string, keyword string, isValidKeyword bool) string {
-				return fmt.Sprintf("{ %s }", keyword)
+				if isValidKeyword {
+					return fmt.Sprintf("{ %s }", keyword)
+				}
+				return fmt.Sprintf("<<< %s >>>", keyword)
 			},
-			wantTransformedMessage: fmt.Sprintf("Here is a message including { %s }, { %s } and { %s }", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2]),
+			wantTransformedMessage: fmt.Sprintf("Here is a message including { %s }, { %s } and { %s }, <<< %s >>> is invalid.", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2], "invalid one"),
 			wantValidKeywords:      k.defaultKeywords[0:3],
-			wantInvalidKeywords:    []string{},
+			wantInvalidKeywords:    []string{"invalid one"},
+		},
+		{
+			name: "InvalidKeywords",
+			args: args{
+				rawMessage: fmt.Sprintf("Here is a message including [%s], [%s] and [%s] and [%s] should be invalid.", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2], "invalid one"),
+			},
+			formatter: DefaultKeywordFormatter,
+			wantTransformedMessage: fmt.Sprintf("Here is a message including [%s], [%s] and [%s] and <<%s>> should be invalid.", k.defaultKeywords[0], k.defaultKeywords[1], k.defaultKeywords[2], "invalid one"),
+			wantValidKeywords:      k.defaultKeywords[0:3],
+			wantInvalidKeywords:    []string{"invalid one"},
 		},
 	}
 	for _, tt := range tests {
